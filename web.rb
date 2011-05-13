@@ -12,10 +12,13 @@ class HPGDemo < Sinatra::Base
   end
 
   get '/dbs' do
+    return fake['dbs'] if ENV['FAKE']
     JSON.dump dbs
   end
 
   get '/dbs/:name' do |name|
+    return fake[name] if ENV['FAKE']
+
     url = ENV["HEROKU_POSTGRESQL_#{name.upcase}_URL"]
     halt(404) unless url
 
@@ -23,6 +26,7 @@ class HPGDemo < Sinatra::Base
     db = db.keep_if {|key| PROPERTIES.include? key.to_s }
     db[:rel] = db[:forked_from] ? "FORK" : db[:tracking] ? "TRACK" : nil
     db[:color] = get_color(url) unless ['waiting', 'create'].include? db[:state]
+
     JSON.dump db
   end
 
@@ -58,5 +62,13 @@ class HPGDemo < Sinatra::Base
       puts e.inspect
     end
     color
+  end
+
+  def fake
+    {
+      'BLUE' => %q({"state":"standby","state_updated_at":"2011-05-13 13:48:22 -0700","state_checked_at":"2011-05-13 13:52:55 -0700","status":"[16KB:1T:2C], (v9.0.4)","elastic_ip":"5.1.1.2","plan":"ronin","created_at":"2011-05-13 13:40:15 -0700","tracking":"yes","current_transaction":739,"rel":"TRACK","color":"cadetblue"}),
+      'ORANGE' => %q({"state":"available","state_updated_at":"2011-05-12 23:41:06 -0700","state_checked_at":"2011-05-13 13:54:18 -0700","status":"[16KB:1T:4C], (v9.0.4)","elastic_ip":"5.1.9.6","plan":"ronin","created_at":"2011-05-12 23:35:41 -0700","current_transaction":739,"rel":null,"color":"cadetblue"}),
+      'dbs' => '["ORANGE", "BLUE"]'
+    }
   end
 end
