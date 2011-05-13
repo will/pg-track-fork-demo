@@ -42,11 +42,12 @@
           var div = "<div class=db id=" + db + ">" +
             "<h2>" + db.split('').sort().join('') + " </h2>"+
             "<div class=content>" +
+              "<span class=elastic_ip></span>" +
               "<span class=state></span>" +
               "<span class=rel></span>" +
               "<span class=status></span>" +
               "<span class=current_transaction></span>" +
-              "<input class=color name=color />" +
+              "<form action=/dbs/"+db+"><input class=color name=color /></form>" +
             "</div></div>"
           $('body').append(div)
           update(db)
@@ -54,6 +55,12 @@
       })
 
       $(function(){
-        $('input').live  
+        $('form').live('submit', function() {
+          var action = $(this).attr('action')
+          var color = $(this).children('input').val()
+          $.post(action, {color: color})
+
+          return false
+        })
       })
 
