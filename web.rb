@@ -22,7 +22,7 @@ class HPGDemo < Sinatra::Base
     db = HerokuPostgresql::Client10.new(url).get_database
     db = db.keep_if {|key| PROPERTIES.include? key.to_s }
     db[:rel] = db[:forked_from] ? "FORK" : db[:tracking] ? "TRACK" : nil
-    db[:color] = get_color(url)
+    db[:color] = get_color(url) unless ['waiting', 'create'].include? db[:state]
     JSON.dump db
   end
 
@@ -35,7 +35,7 @@ class HPGDemo < Sinatra::Base
     ENV.keys.map do |k|
       k=~/^HEROKU_POSTGRESQL_(\w+)_URL$/
       $+
-    end.compact
+    end.compact.reverse
   end
 
   def set_color(url,color)
