@@ -30,7 +30,7 @@
       $.getJSON('/dbs', function(data) {
         _.each(data, function(db) {
           var div = "<div class=db id=" + db + ">" +
-            "<h2>" + db + " </h2>"+
+            "<h2>" + db.split('').sort().join('') + " </h2>"+
             "<div class=content>" +
               "<span class=state></span>" +
               "<span class=rel></span>" +
