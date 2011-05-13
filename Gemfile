@@ -7,4 +7,6 @@ gem 'sass'
 gem 'rest-client'
 gem 'json'
 gem 'heroku'
+gem 'sequel'
+gem 'pg'
 

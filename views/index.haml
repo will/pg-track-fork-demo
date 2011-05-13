@@ -9,6 +9,8 @@
         .db
           display: inline-block
           padding: 5px
+          input
+            display: none
         .content span
           display: block
 
@@ -20,9 +22,17 @@
     :javascript
       function update(db) {
         $.getJSON('/dbs/'+db, function(data) {
+          var dbid = "#"+db
           console.log(data)
+
+          $(dbid).css('background-color', data.color)
+          if(!data.rel) {
+            var box = $(dbid + ' input')
+            box.show()
+            if(! box.is(":focus")) { box.val(data.color) }
+          }
           _.each(data, function(val, key) {
-            $("#"+db+" .content ."+key).text(val)
+            $(dbid+" .content ."+key).text(val)
           })
           setTimeout( function() { update(db) }, 1000)
         })
@@ -36,9 +46,14 @@
               "<span class=rel></span>" +
               "<span class=status></span>" +
               "<span class=current_transaction></span>" +
+              "<input class=color name=color />" +
             "</div></div>"
           $('body').append(div)
           update(db)
         })
+      })
+
+      $(function(){
+        $('input').live  
       })
 

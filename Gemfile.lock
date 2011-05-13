@@ -14,11 +14,13 @@ GEM
       configuration (>= 0.0.5)
       rake (>= 0.8.1)
     mime-types (1.16)
+    pg (0.11.0)
     rack (1.2.2)
     rake (0.8.7)
     rest-client (1.6.1)
       mime-types (>= 1.16)
     sass (3.1.1)
+    sequel (3.20.0)
     sinatra (1.2.6)
       rack (~> 1.1)
       tilt (>= 1.2.2, < 2.0)
@@ -36,7 +38,9 @@ DEPENDENCIES
   haml
   heroku
   json
+  pg
   rest-client
   sass
+  sequel
   sinatra
   thin
