@@ -2,7 +2,43 @@
 %html
   %head
     %title pg demo
-    %script{src: 'https://ajax.googleapis.com/ajax/libs/jquery/1.6.0/jquery.min.js'}
+    %script{src: '/jquery.js'}
+    %script{src: '/underscore.js'}
+    %style
+      :sass
+        .db
+          display: inline-block
+          padding: 5px
+        .content span
+          display: block
+
+    :javascript
+      _.templateSettings = { interpolate : /\{\{(.+?)\}\}/g }
+
   %body
     %h1 pg demo
+    :javascript
+      function update(db) {
+        $.getJSON('/dbs/'+db, function(data) {
+          console.log(data)
+          _.each(data, function(val, key) {
+            $("#"+db+" .content ."+key).text(val)
+          })
+          setTimeout( function() { update(db) }, 1000)
+        })
+      }
+      $.getJSON('/dbs', function(data) {
+        _.each(data, function(db) {
+          var div = "<div class=db id=" + db + ">" +
+            "<h2>" + db + " </h2>"+
+            "<div class=content>" +
+              "<span class=state></span>" +
+              "<span class=rel></span>" +
+              "<span class=status></span>" +
+              "<span class=current_transaction></span>" +
+            "</div></div>"
+          $('body').append(div)
+          update(db)
+        })
+      })
 
