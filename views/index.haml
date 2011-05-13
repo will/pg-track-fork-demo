@@ -1,20 +1,27 @@
 !!!
 %html
   %head
-    %title pg demo
+    %title heorku postgres track and fork demo
     %script{src: '/jquery.js'}
     %script{src: '/underscore.js'}
     %style
       :sass
+        body
+          font-family: Futura
+        .dbs
+
         .db
           display: inline-block
+          float: left
+          font-size: 1.3em
           padding: 10px
           margin: 5px
-          height: 200px
-          width: 200px
+          width: 250px
+          height: 250px
           border-radius: 8px
           input
             display: none
+          box-shadow:  1px 1px 5px black
         .content span
           display: block
 
@@ -22,12 +29,12 @@
       _.templateSettings = { interpolate : /\{\{(.+?)\}\}/g }
 
   %body
-    %h1 pg demo
+    %h1 heorku postgres track and fork demo
+    .dbs
     :javascript
       function update(db) {
         $.getJSON('/dbs/'+db, function(data) {
           var dbid = "#"+db
-          console.log(data)
 
           $(dbid).css('background-color', data.color)
           if(!data.rel) {
@@ -44,7 +51,7 @@
       $.getJSON('/dbs', function(data) {
         _.each(data, function(db) {
           var div = "<div class=db id=" + db + ">" +
-            "<h2>" + db.split('').sort().join('') + " </h2>"+
+            "<h2>" + db.split('').sort().reverse().join('') + " </h2>"+
             "<div class=content>" +
               "<span class=elastic_ip></span>" +
               "<span class=state></span>" +
@@ -53,7 +60,7 @@
               "<span class=current_transaction></span>" +
               "<form action=/dbs/"+db+"><input class=color name=color /></form>" +
             "</div></div>"
-          $('body').append(div)
+          $('.dbs').append(div)
           update(db)
         })
       })
