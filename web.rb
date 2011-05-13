@@ -35,7 +35,7 @@ class HPGDemo < Sinatra::Base
     ENV.keys.map do |k|
       k=~/^HEROKU_POSTGRESQL_(\w+)_URL$/
       $+
-    end.compact.reverse
+    end.compact
   end
 
   def set_color(url,color)
