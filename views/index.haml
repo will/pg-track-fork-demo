@@ -8,6 +8,7 @@
       :sass
         body
           font-family: Futura
+          text-shadow: rgba(0,0,0,0.5) -1px 0, rgba(0,0,0,0.3) 0 -1px, rgba(255,255,255,0.3) 0 1px
         .h1
           text-shadow: 2px 2px 2px white
         .dod
@@ -17,6 +18,7 @@
           z-index: -10
         .db
           display: inline-block
+          position: relative
           float: left
           font-size: 1.3em
           padding: 10px
@@ -25,13 +27,22 @@
           height: 250px
           border-radius: 8px
           overflow: hidden
+          box-shadow: 1px 1px 5px black
           input
             border: 0px
             font-size: 1.1em
             border-radius: 8px
             box-shadow: inset 1px 1px 5px black
             padding: 5px
-          box-shadow: 1px 1px 5px black
+          .rel
+            position: absolute
+            right: -50px
+            top: 20px
+            -webkit-transform: rotate(45deg)
+            padding: 2px 50px
+            background-color: rgba(0,0,0,0.7)
+            color: white
+
         .content span
           display: block
 
