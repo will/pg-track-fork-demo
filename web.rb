@@ -6,40 +6,43 @@ require 'sequel'
 class HPGDemo < Sinatra::Base
   set :public, File.dirname(__FILE__) + '/public'
 
-  PROPERTIES = %w[state state_updated_at state_checked_at status plan created_at current_transaction forked_from tracking elastic_ip]
   get '/' do
     haml :index
   end
 
+  PROPERTIES = %w[state status current_transaction forked_from tracking elastic_ip]
   get '/dbs' do
     return fake['dbs'] if ENV['FAKE']
-    JSON.dump dbs
+
+    dbs = ENV.keys.map do |k|
+      k=~/^HEROKU_POSTGRESQL_(\w+)_URL$/
+      $+
+    end.compact.map do |db|
+      hpg = HerokuPostgresql::Client10.new( url_from_name(db) ).get_database
+      hpg.keep_if {|key| PROPERTIES.include? key.to_s}
+      hpg[:rel] = hpg[:forked_from] ? "FORK" : hpg[:tracking] ? "TRACK" : "HEAD"
+      [db, hpg]
+    end
+
+    JSON.dump Hash[dbs]
   end
 
   get '/dbs/:name' do |name|
     return fake[name] if ENV['FAKE']
-
     url = ENV["HEROKU_POSTGRESQL_#{name.upcase}_URL"]
     halt(404) unless url
-
-    db = HerokuPostgresql::Client10.new(url).get_database
-    db = db.keep_if {|key| PROPERTIES.include? key.to_s }
-    db[:rel] = db[:forked_from] ? "FORK" : db[:tracking] ? "TRACK" : nil
-    db[:color] = get_color(url) unless ['waiting', 'create'].include? db[:state]
+    db = {}
+    db[:color] = get_color(url)
 
     JSON.dump db
   end
 
   post '/dbs/:name' do |name|
-    url = ENV["HEROKU_POSTGRESQL_#{name.upcase}_URL"]
-    set_color(url, params['color'])
+    set_color(url_from_name(name), params['color'])
   end
 
-  def dbs
-    ENV.keys.map do |k|
-      k=~/^HEROKU_POSTGRESQL_(\w+)_URL$/
-      $+
-    end.compact
+  def url_from_name(name)
+    ENV["HEROKU_POSTGRESQL_#{name.upcase}_URL"]
   end
 
   def set_color(url,color)
@@ -66,9 +69,9 @@ class HPGDemo < Sinatra::Base
 
   def fake
     {
-      'BLUE' => %q({"state":"standby","state_updated_at":"2011-05-13 13:48:22 -0700","state_checked_at":"2011-05-13 13:52:55 -0700","status":"[16KB:1T:2C], (v9.0.4)","elastic_ip":"5.1.1.2","plan":"ronin","created_at":"2011-05-13 13:40:15 -0700","tracking":"yes","current_transaction":739,"rel":"TRACK","color":"cadetblue"}),
-      'ORANGE' => %q({"state":"available","state_updated_at":"2011-05-12 23:41:06 -0700","state_checked_at":"2011-05-13 13:54:18 -0700","status":"[16KB:1T:4C], (v9.0.4)","elastic_ip":"5.1.9.6","plan":"ronin","created_at":"2011-05-12 23:35:41 -0700","current_transaction":739,"rel":null,"color":"cadetblue"}),
-      'dbs' => '["ORANGE", "BLUE"]'
+      'BLUE' => %q({"color":"purple"}),
+      'ORANGE' => %q({"color":"purple"}),
+      'dbs' => %q({"BLUE":{"state":"standby","status":"[40KB:1T:2C], (v9.0.4)","elastic_ip":"5.1.1.2","tracking":"resource762@heroku.com","current_transaction":776,"rel":"TRACK"},"ORANGE":{"state":"available","status":"[48KB:1T:1C], (v9.0.4)","elastic_ip":"5.1.5.6","current_transaction":776,"rel":"HEAD"}})
     }
   end
 end

@@ -8,8 +8,13 @@
       :sass
         body
           font-family: Futura
-        .dbs
-
+        .h1
+          text-shadow: 2px 2px 2px white
+        .dod
+          position: absolute
+          right: 10px
+          top: 10px
+          z-index: -10
         .db
           display: inline-block
           float: left
@@ -19,9 +24,14 @@
           width: 250px
           height: 250px
           border-radius: 8px
+          overflow: hidden
           input
-            display: none
-          box-shadow:  1px 1px 5px black
+            border: 0px
+            font-size: 1.1em
+            border-radius: 8px
+            box-shadow: inset 1px 1px 5px black
+            padding: 5px
+          box-shadow: 1px 1px 5px black
         .content span
           display: block
 
@@ -30,38 +40,41 @@
 
   %body
     %h1 heorku postgres track and fork demo
+    %img.dod{:src => "/dod.png"}
     .dbs
     :javascript
+
       function update(db) {
         $.getJSON('/dbs/'+db, function(data) {
           var dbid = "#"+db
-
           $(dbid).css('background-color', data.color)
-          if(!data.rel) {
-            var box = $(dbid + ' input')
-            box.show()
-            if(! box.is(":focus")) { box.val(data.color) }
-          }
+
+          var box = $(dbid + ' input')
+          if(! box.is(":focus")) { box.val(data.color) }
+
           _.each(data, function(val, key) {
             $(dbid+" .content ."+key).text(val)
           })
-          setTimeout( function() { update(db) }, 1000)
         })
       }
+
       $.getJSON('/dbs', function(data) {
-        _.each(data, function(db) {
-          var div = "<div class=db id=" + db + ">" +
-            "<h2>" + db.split('').sort().reverse().join('') + " </h2>"+
-            "<div class=content>" +
-              "<span class=elastic_ip></span>" +
-              "<span class=state></span>" +
-              "<span class=rel></span>" +
-              "<span class=status></span>" +
-              "<span class=current_transaction></span>" +
-              "<form action=/dbs/"+db+"><input class=color name=color /></form>" +
-            "</div></div>"
+        _.each(data, function(vals, db) {
+            var div = "<div class=db id=" + db + ">" +
+              "<h2>" + db.split('').sort().reverse().join('') + " </h2>"+
+              "<div class=content>" +
+              "<span class=elastic_ip>"+ vals.elastic_ip +"</span>" +
+              "<span class=state>"+ vals.state +"</span>" +
+              '<span class="rel '+ vals.rel +'">'+ vals.rel +"</span>" +
+              "<span class=current_transaction></span>"
+            console.log(vals.rel)
+            if(vals.rel !== "TRACK") {
+               div += "<form action=/dbs/"+db+
+                      "><input class=color name=color /></form>"
+            }
+          div += "</div></div>"
           $('.dbs').append(div)
-          update(db)
+          setInterval( function() { update(db) }, 1000)
         })
       })
 
