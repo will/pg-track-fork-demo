@@ -4,6 +4,7 @@
     %title heorku postgres track and fork demo
     %script{src: '/jquery.js'}
     %script{src: '/underscore.js'}
+    %link{href: '/buttons.css', rel:'stylesheet'}
     %style
       :sass
         body
@@ -31,6 +32,7 @@
           input
             border: 0px
             font-size: 1.1em
+            width: 190px
             border-radius: 8px
             box-shadow: inset 1px 1px 5px black
             padding: 5px
@@ -54,18 +56,17 @@
     %img.dod{:src => "/dod.png"}
     .dbs
     :javascript
+      COLORS = ['chartreuse', 'gold', 'darkturquoise', 'palegreen', 'magenta', 'firebrick', 'navajowhite', 'mediumaquamarine', 'aliceblue', 'indianred', 'orangered', 'deeppink', 'orchid', 'paleturquoise', 'mintcream']
 
       function update(db) {
         $.getJSON('/dbs/'+db, function(data) {
           var dbid = "#"+db
           $(dbid).css('background-color', data.color)
+          //_.without($('#BLUE').css('backgroundColor').split(/\D/), '')
 
           var box = $(dbid + ' input')
           if(! box.is(":focus")) { box.val(data.color) }
 
-          _.each(data, function(val, key) {
-            $(dbid+" .content ."+key).text(val)
-          })
         })
       }
 
@@ -81,7 +82,8 @@
             console.log(vals.rel)
             if(vals.rel !== "TRACK") {
                div += "<form action=/dbs/"+db+
-                      "><input class=color name=color /></form>"
+                      "><a href='' class='button xs pink glossy'>↺</a>"+
+                      "<input class=color name=color /></form>"
             }
           div += "</div></div>"
           $('.dbs').append(div)
@@ -95,6 +97,13 @@
           var color = $(this).children('input').val()
           $.post(action, {color: color})
 
+          return false
+        })
+
+        $('a.button').live('click', function() {
+          var input = $(this).siblings('input')
+          input.val( COLORS[ ~~(Math.random() * COLORS.length) ]  )
+          $(input.parent()).submit()
           return false
         })
       })
