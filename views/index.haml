@@ -65,7 +65,12 @@
     %img.dod{:src => "/dod.png"}
     .dbs
     :javascript
-      COLORS = ['chartreuse', 'gold', 'darkturquoise', 'palegreen', 'magenta', 'firebrick', 'navajowhite', 'mediumaquamarine', 'aliceblue', 'indianred', 'orangered', 'deeppink', 'orchid', 'paleturquoise', 'mintcream']
+      COLORS = ['chartreuse', 'gold', 'darkturquoise',
+                'palegreen', 'magenta', 'firebrick',
+                'palevioletred', 'mediumaquamarine', 'crimson',
+                'indianred', 'orangered', 'deeppink',
+                'olivedrab', 'plum', 'deepskyblue',
+                'orchid', 'paleturquoise', 'mintcream']
 
       function update(db) {
         $.getJSON('/dbs/'+db, function(data) {
