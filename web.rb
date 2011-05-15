@@ -60,7 +60,7 @@ class HPGDemo < Sinatra::Base
   end
 
   def get_color(url)
-    colors = ['crimson']
+    colors = ['']
     begin
       db = Sequel.connect(url)
       colors = db[:colors].limit(8).order_by(:id.desc).all.map{|r| r[:color]}.compact
