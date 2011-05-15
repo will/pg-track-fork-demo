@@ -59,6 +59,33 @@
 
         .content span
           display: block
+        .clear
+          clear: both
+        .text
+          font-size: 1.7em
+          border-top: 5px solid steelblue
+          border-bottom: 5px solid steelblue
+          padding: 1em
+          background-color: lightsteelblue
+          padding-top: 1em
+          margin-top: 1em
+
+          clear: both
+          h1, h2
+            margin-bottom: 0.1em
+          p
+            margin-top: 0
+            margin-bottom: 0.1em
+            margin-left: 0.4em
+            width: 700px
+            a
+              color: crimson
+          p.code
+            width: 100%
+            font-family: Monaco
+            font-size: 0.9em
+            background-color: lightsalmon
+            padding: 0.25em 0.1em
 
     :javascript
       _.templateSettings = { interpolate : /\{\{(.+?)\}\}/g }
@@ -68,6 +95,44 @@
     %h1 heorku postgres track and fork demo
     %img.dod{:src => "/dod.png"}
     .dbs
+
+    .clear
+    .text
+      %h1 tracking and forking… databases‽
+      %p yes! it's still beta, so the names and commands might change and all that. also please come talk with us before doing anything crazy.
+      %h2 tracking
+      %p shiny new copy of your database, continuously following
+      %p read only
+      %p can break off and start writing, but never return
+      %p.code ➤ heroku addons:add heroku-postgresql --track HEROKU_POSTGRESQL_ORANGE
+      %h2 forking
+      %p shiny new copy of your database, doesn't follow
+      %p read and write
+      %p.code ➤ heroku addons:add heroku-postgresql --fork HEROKU_POSTGRESQL_ORANGE
+
+    .text
+      %h1 what would I use this for?
+      %p oh, lots of things. read slaves, high availability, sharding,   analytics, risky migrations, whatever.
+      %h2 we've made it easy for you
+
+    .text
+      %h1 how does it work?
+      %h2 pretty well
+      %p fortunately!
+      %h2 write ahead log shipping
+      %p
+        wal-e
+        %a{:href=>'http://github.com/heroku/wal-e'} [github.com/heroku/wal-e]
+        go check it out
+      %h2 base backup
+      %p keeps things speedy
+      %h2 streaming replication
+      %p low latency
+
+
+
+
+
     :javascript
       COLORS = ['chartreuse', 'gold', 'darkturquoise',
                 'palegreen', 'magenta', 'firebrick',
