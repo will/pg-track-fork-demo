@@ -25,6 +25,7 @@ class HPGDemo < Sinatra::Base
         [db, hpg]
       rescue
         [db, {}]
+      end
     end
 
     JSON.dump Hash[dbs]
