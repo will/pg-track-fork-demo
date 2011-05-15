@@ -10,8 +10,11 @@
         body
           font-family: Futura
           text-shadow: rgba(0,0,0,0.5) -1px 0, rgba(0,0,0,0.3) 0 -1px, rgba(255,255,255,0.3) 0 1px
-        .h1
-          text-shadow: 2px 2px 2px white
+        a
+          color: cadetblue
+          text-decoration: none
+        h1
+          margin-top: 0
         .dod
           position: absolute
           right: 10px
@@ -61,6 +64,7 @@
       _.templateSettings = { interpolate : /\{\{(.+?)\}\}/g }
 
   %body
+    %a{:href => "https://github.com/will/pg-track-fork-demo"} [ source ]
     %h1 heorku postgres track and fork demo
     %img.dod{:src => "/dod.png"}
     .dbs
