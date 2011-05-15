@@ -18,10 +18,13 @@ class HPGDemo < Sinatra::Base
       k=~/^HEROKU_POSTGRESQL_(\w+)_URL$/
       $+
     end.compact.map do |db|
-      hpg = HerokuPostgresql::Client10.new( url_from_name(db) ).get_database
-      hpg.keep_if {|key| PROPERTIES.include? key.to_s}
-      hpg[:rel] = hpg[:forked_from] ? "FORK" : hpg[:tracking] ? "TRACK" : "HEAD"
-      [db, hpg]
+      begin
+        hpg = HerokuPostgresql::Client10.new( url_from_name(db) ).get_database
+        hpg.keep_if {|key| PROPERTIES.include? key.to_s}
+        hpg[:rel] = hpg[:forked_from] ? "FORK" : hpg[:tracking] ? "TRACK" : "HEAD"
+        [db, hpg]
+      rescue
+        [db, {}]
     end
 
     JSON.dump Hash[dbs]
