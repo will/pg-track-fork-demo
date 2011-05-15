@@ -32,13 +32,14 @@ class HPGDemo < Sinatra::Base
     url = ENV["HEROKU_POSTGRESQL_#{name.upcase}_URL"]
     halt(404) unless url
     db = {}
-    db[:color] = get_color(url)
+    db[:colors] = get_color(url)
 
     JSON.dump db
   end
 
   post '/dbs/:name' do |name|
-    set_color(url_from_name(name), params['color'])
+    color = params['color']
+    set_color(url_from_name(name), color) unless color.empty?
   end
 
   def url_from_name(name)
@@ -48,7 +49,7 @@ class HPGDemo < Sinatra::Base
   def set_color(url,color)
     begin
       db = Sequel.connect(url)
-      db["update list set val='#{color}' where key='color'"].first
+      db[:colors].insert :color => color
       db.disconnect
     rescue => e
       puts e.inspect
@@ -56,21 +57,21 @@ class HPGDemo < Sinatra::Base
   end
 
   def get_color(url)
-    color = 'white'
+    colors = ['crimson']
     begin
       db = Sequel.connect(url)
-      color = db["select val from list where key='color'"].first[:val]
+      colors = db[:colors].limit(8).order_by(:id.desc).all.map{|r| r[:color]}.compact
       db.disconnect
     rescue => e
       puts e.inspect
     end
-    color
+    colors
   end
 
   def fake
     {
-      'BLUE' => %q({"color":"purple"}),
-      'ORANGE' => %q({"color":"purple"}),
+      'BLUE' =>   %q({"colors":["cadetblue","orange","red","cadetblue","gold","crimson","orange","red"]}),
+      'ORANGE' => %q({"colors":["cadetblue","orange","red","cadetblue","gold","crimson","orange","red"]}),
       'dbs' => %q({"BLUE":{"state":"standby","status":"[40KB:1T:2C], (v9.0.4)","elastic_ip":"5.1.1.2","tracking":"resource762@heroku.com","current_transaction":776,"rel":"TRACK"},"ORANGE":{"state":"available","status":"[48KB:1T:1C], (v9.0.4)","elastic_ip":"5.1.5.6","current_transaction":776,"rel":"HEAD"}})
     }
   end

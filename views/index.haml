@@ -29,6 +29,15 @@
           border-radius: 8px
           overflow: hidden
           box-shadow: 1px 1px 5px black
+          .previous
+            position: absolute
+            bottom: 10px
+            span
+              height: 20px
+              width: 20px
+              float: left
+              box-shadow: 1px 1px 7px black
+              margin: 5px
           input
             border: 0px
             font-size: 1.1em
@@ -61,11 +70,23 @@
       function update(db) {
         $.getJSON('/dbs/'+db, function(data) {
           var dbid = "#"+db
-          $(dbid).css('background-color', data.color)
+          var newColor = data.colors[0]
+
+          $(dbid).css('background-color', newColor)
           //_.without($('#BLUE').css('backgroundColor').split(/\D/), '')
 
           var box = $(dbid + ' input')
-          if(! box.is(":focus")) { box.val(data.color) }
+          if(! box.is(":focus")) { box.val(newColor) }
+
+          var previous = $(dbid + ' .previous')
+          if(previous.children().length === 0) {
+            _.each(data.colors, function(color) {
+              previous.append("<span style='background-color: "+ color +";'>&nbsp;</span>")
+            })
+          } else if (previous.children().first().css('backgroundColor') !== $(dbid).css('backgroundColor')) {
+              previous.children().last().remove()
+              previous.prepend("<span style='background-color: "+ newColor +";'>&nbsp;</span>")
+          }
 
         })
       }
@@ -85,7 +106,7 @@
                       "><a href='' class='button xs pink glossy'>↺</a>"+
                       "<input class=color name=color /></form>"
             }
-          div += "</div></div>"
+          div += "<div class=previous></div></div></div>"
           $('.dbs').append(div)
           setInterval( function() { update(db) }, 1000)
         })
