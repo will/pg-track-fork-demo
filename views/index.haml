@@ -111,9 +111,10 @@
               "<span class=current_transaction></span>"
             console.log(vals.rel)
             if(vals.rel !== "TRACK") {
-               div += "<form action=/dbs/"+db+
-                      "><a href='' class='button xs pink glossy'>↺</a>"+
-                      "<input class=color name=color /></form>"
+               div += "<form action=/dbs/"+db+">"+
+               "<input class=color name=color />"+
+               "<a href='' class='button xs pink glossy'>↺</a>"+
+               "</form>"
             }
           div += "<div class=previous></div></div></div>"
           $('.dbs').append(div)
